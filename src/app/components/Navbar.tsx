@@ -25,10 +25,10 @@ export default function Navbar() {
 						<span className={'font-bold'}>SamZaar</span>
 	  				</a>
 	  				<div className={'hidden md:flex items-center space-x-4 '}>
-	  					<a href="/category/jewelery" className={(pathname == '/category/jewelery' ? 'border-b-[3px] border-blue-400' : '') + " py-5 px-2 hover:text-blue-500 transition duration-300"}>Jewelery</a>
-	  					<a href="/category/electronics" className={(pathname == '/category/electronics' ? 'border-b-[3px] border-blue-400' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Electronics</a>
-	  					<a href="/category/men's clothing" className={(pathname == '/category/men-s%20clothing' ? 'border-b-[3px] border-blue-400' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Men</a>
-	  					<a href="/category/women's clothing" className={(pathname == '/category/women-s%20clothing' ? 'border-b-[3px] border-blue-400' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Women</a>
+	  					<a href="/category/jewelery" className={(pathname == '/category/jewelery' ? 'border-b-[3px] border-blue-400 font-semibold' : '') + " py-5 px-2 hover:text-blue-500 transition duration-300"}>Jewelery</a>
+	  					<a href="/category/electronics" className={(pathname == '/category/electronics' ? 'border-b-[3px] border-blue-400 font-semibold' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Electronics</a>
+	  					<a href="/category/men's clothing" className={(pathname == '/category/men-s%20clothing' ? 'border-b-[3px] border-blue-400 font-semibold' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Men</a>
+	  					<a href="/category/women's clothing" className={(pathname == '/category/women-s%20clothing' ? 'border-b-[3px] border-blue-400 font-semibold' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Women</a>
 	  				</div>
 	  			</div>
 	  			<div className={'flex items-center space-x-4'}>
