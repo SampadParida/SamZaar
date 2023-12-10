@@ -5,7 +5,9 @@ import Link from 'next/link'
 import {useState} from 'react';
 import { usePathname } from 'next/navigation'
 
-export default function ProductCard({title, price, image}) {
+type ChildComponentProps = { title:string, price:number, image:string };
+
+export default function ProductCard({title, price, image}: ChildComponentProps) {
 
   return (
   	<a href="#" className={'bg-white shadow hover:shadow-2xl rounded-xl transition duration-300 p-3 border-inherit cursor-pointer'}>

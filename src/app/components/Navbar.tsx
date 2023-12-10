@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 export default function Navbar() {
   const pathname = usePathname()
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
-  const onMobileMenuClick = (e) => {
+  const onMobileMenuClick = () => {
   	console.log('isMobileMenuActive==== ', isMobileMenuActive)
   	setIsMobileMenuActive(isMobileMenuActive => !isMobileMenuActive);
   }

@@ -12,11 +12,14 @@ async function fetchData(){
 // const dataPromise = fetchData()
 
 export default function Home() {
-  const [data, setData] =  useState(null)
+  type ApiResType = { id:number, title:string, price:number, image:string };
+  // const [data, setData] =  useState<ApiResType>({ id:0, title:'', price:0, image:'' })
+  const [data, setData] = useState<ApiResType[] | null>(null);
   const [isLoading, setLoading] =  useState(true)
+  
 
   useEffect(() => {
-    fetch(`https://fakestoreapi.com/products`)
+    const { data }: any = fetch(`https://fakestoreapi.com/products`)
       .then((res) => res.json())
       .then(data => {
         setData(data)
