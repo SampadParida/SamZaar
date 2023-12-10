@@ -1,25 +1,27 @@
 'use client'
+import { Metadata } from 'next'
 import Image from 'next/image';
 import {useState, useEffect} from 'react';
+import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
+import ProductCard from '../../components/ProductCard';
 
-import ProductCard from './components/ProductCard';
+// export const metadata: Metadata = {
+//   title: 'Category',
+// }
 
-async function fetchData(){
-  const res = await fetch(`https://fakestoreapi.com/products`);
-  return res.json();
-}
-
-// const dataPromise = fetchData()
-
-export default function Home() {
+export default function Category() {
+  const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
   type ApiResType = { id:number, title:string, price:number, image:string };
-  // const [data, setData] =  useState<ApiResType>({ id:0, title:'', price:0, image:'' })
   const [data, setData] = useState<ApiResType[] | null>(null);
-  const [isLoading, setLoading] =  useState(true)
+  const [isLoading, setLoading] =  useState(true);
+  
+  const name = (params) ? params.name : 'jewelery';
   
 
   useEffect(() => {
-    const { data }: any = fetch(`https://fakestoreapi.com/products`)
+    const { data }: any = fetch(`https://fakestoreapi.com/products/category/${name}`)
       .then((res) => res.json())
       .then(data => {
         setData(data)
@@ -27,8 +29,6 @@ export default function Home() {
       })
   }, [])
 
-  const ps = [1,2,3,4,5,6,7,8,9,10];
-  // const products =  use(dataPromise);
   const products = (data) ? data : [];
   return (
     <main className="flex flex-col items-center justify-between px-24 py-5">
@@ -45,7 +45,6 @@ export default function Home() {
         ))}
       </div>
       )}
-
     </main>
   )
 }
