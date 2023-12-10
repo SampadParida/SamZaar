@@ -2,15 +2,16 @@
 'use client'
 import Link from 'next/link' 
 import {useState} from 'react';
-import { usePathname } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
+
 
 export default function Navbar() {
-  const pathname = usePathname()
+  const pathname = usePathname().replace("'", "-");
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
   const onMobileMenuClick = () => {
-  	console.log('isMobileMenuActive==== ', isMobileMenuActive)
   	setIsMobileMenuActive(isMobileMenuActive => !isMobileMenuActive);
   }
+  console.log('router.pathname ============== ', pathname)
   return (
   	<nav className={'bg-white shadow-xl'}>
   		{/* NAV BAR */}
@@ -24,10 +25,10 @@ export default function Navbar() {
 						<span className={'font-bold'}>SamZaar</span>
 	  				</a>
 	  				<div className={'hidden md:flex items-center space-x-4 '}>
-	  					<a href="/category/jewelery" className={' py-5 px-2 hover:text-blue-500 transition duration-300'}>Jewelery</a>
-	  					<a href="/category/electronics" className={' py-5 px-2 hover:text-blue-500 transition duration-300'}>Electronics</a>
-	  					<a href="/category/men's clothing" className={' py-5 px-2 hover:text-blue-500 transition duration-300'}>Men</a>
-	  					<a href="/category/women's clothing" className={' py-5 px-2 hover:text-blue-500 transition duration-300'}>Women</a>
+	  					<a href="/category/jewelery" className={(pathname == '/category/jewelery' ? 'border-b-[3px] border-blue-400' : '') + " py-5 px-2 hover:text-blue-500 transition duration-300"}>Jewelery</a>
+	  					<a href="/category/electronics" className={(pathname == '/category/electronics' ? 'border-b-[3px] border-blue-400' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Electronics</a>
+	  					<a href="/category/men's clothing" className={(pathname == '/category/men-s%20clothing' ? 'border-b-[3px] border-blue-400' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Men</a>
+	  					<a href="/category/women's clothing" className={(pathname == '/category/women-s%20clothing' ? 'border-b-[3px] border-blue-400' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>Women</a>
 	  				</div>
 	  			</div>
 	  			<div className={'flex items-center space-x-4'}>
@@ -44,7 +45,7 @@ export default function Navbar() {
 
   		{/* MOBILE MENU LIST */}
   		<div className={isMobileMenuActive ? 'md:hidden' : 'hidden' }>
-  			<a href="/category/jewelery" className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Cloths</a>
+  			<a href="/category/jewelery" className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Jewelery</a>
 				<a href="/category/electronics" className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Elctronics</a>
 				<a href="/category/men's clothing" className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Men</a>
 				<a href="/category/women's clothing" className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Women</a>
