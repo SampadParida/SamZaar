@@ -14,7 +14,7 @@ export default function Navbar() {
   return (
   	<nav className={'bg-white shadow-xl'}>
   		{/* NAV BAR */}
-  		<div className={'max-w-7xl mx-auto px-4'}>
+  		<div className={'max-w-7xl mx-auto px-4'} style={{color: 'black'}}>
 	  		<div className={'flex justify-between items-center'}>
 	  			<div className={'flex space-x-4'}>
 	  				<a className={'flex items-center py-5 px-2 space-x-1'}>
