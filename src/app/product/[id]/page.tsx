@@ -1,0 +1,53 @@
+'use client'
+import { Metadata } from 'next'
+import Image from 'next/image';
+import {useState, useEffect} from 'react';
+import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
+
+import ProductCard from '../../components/ProductCard';
+
+// export const metadata: Metadata = {
+//   title: 'Category',
+// }
+
+export default function Category() {
+  const params = useParams();
+  const productId = (params) ? params.id : 1;
+  type ApiResType = { id:number, title:string, price:number, image:string, description:string };
+  const [data, setData] = useState<ApiResType | null>(null);
+  const [isLoading, setLoading] =  useState(true);
+  
+
+  useEffect(() => {
+    const { data }: any = fetch(`https://fakestoreapi.com/products/${productId}`)
+      .then((res) => res.json())
+      .then(data => {
+        setData(data)
+        setLoading(false)
+      })
+  }, [])
+
+  return (
+    <main className="flex flex-col items-center justify-between px-24 py-5">
+      <div className={'grid grid-cols-12 gap-4 w-screen max-w-7xl mx-0 px-4'}>
+        <div className={'md:col-span-4 col-span-12'}>
+          <Image
+              alt="The guitarist in the concert."
+              src={data ? (data.image ? data.image : '') : ''}
+              width={100}
+              height={100}
+              className="min-h-[300px] rounded-xl border-inherit shadow w-full border-inherit bg-gray-300 mx-auto"
+              layout="responsive"
+          />
+        </div>
+        <div className={'md:col-span-8 col-span-12'}>
+          <h1 className={'text-3xl mb-3'}>{data ? data.title : ''}</h1>
+          <h1 className={'text-2xl mb-3 font-bold'}>Rs. {data ? data.price : ''}</h1>
+          <button className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>Add to Cart</button>
+          <p className={'mt-4'}>{data ? data.description : ''}</p>
+        </div>
+      </div>
+      
+    </main>
+  )
+}

@@ -6,12 +6,13 @@ import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigat
 
 
 export default function Navbar() {
-  const pathname = usePathname().replace("'", "-");
+  const pathnameStr = usePathname();
+  const pathname = pathnameStr ? pathnameStr.replace("'", "-") : '';
   const [isMobileMenuActive, setIsMobileMenuActive] = useState(false);
   const onMobileMenuClick = () => {
   	setIsMobileMenuActive(isMobileMenuActive => !isMobileMenuActive);
   }
-  console.log('router.pathname ============== ', pathname)
+
   return (
   	<nav className={'bg-white shadow-xl'}>
   		{/* NAV BAR */}
