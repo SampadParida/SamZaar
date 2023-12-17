@@ -43,7 +43,7 @@ export default function Category() {
         setData(data)
         setLoading(false)
       })
-  }, [])
+  }, [productId])
 
   return (
     <main className="flex flex-col items-center justify-between px-24 py-5">

@@ -27,7 +27,7 @@ export default function Category() {
         setData(data)
         setLoading(false)
       })
-  }, [])
+  }, [name])
 
   const products = (data) ? data : [];
   return (
