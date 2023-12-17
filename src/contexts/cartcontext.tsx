@@ -1,37 +1,49 @@
 "use client";
 import { createContext, ReactNode, useContext, useState } from 'react';
 
+interface productProps{
+	category: string,
+	description: string,
+	id: number,
+	image: string,
+	price: number,
+	rating: object,
+	title: string
+}
 
 // CREATE INTERFACE
 interface cartContextProps {
 	cartTotalNumber: number,
-	cartProductList: Array,
+	cartProductList: productProps[],
+	setCartTotalNumber: (value: number) => void,
 	updatecartTotalNumber: (increment: number) => void,
-	setCartProductList: (product: object) => void,
+	updatecartProducts: (product: any) => void,
 }
 
 // CREATE CONTEXT USING INTERFACE TYPE
 const CartContext = createContext<cartContextProps | undefined>(undefined);
 
 
-export const CartContextProvider: React.FC = ({ children }) => {
+// export const CartContextProvider: React.FC = ({ children }) => {
+export const CartContextProvider = ( {children} : {children: React.ReactNode} ) => {
 	const [cartTotalNumber, setCartTotalNumber] = useState<number>(0);
 	const updatecartTotalNumber = (increment: number) => {
     setCartTotalNumber((prevTotalNumber) => { return prevTotalNumber + increment });
   };
 
-	const [cartProductList, setCartProductList] = useState<Array[]>([]);
-	const updatecartProducts = (product: object) => {
+	const [cartProductList, setCartProductList] = useState<productProps[]>([]);
+	const updatecartProducts = (product: productProps) => {
     setCartProductList((prevProducts) => { return [...prevProducts, product] });
   };
 	const contextValue: cartContextProps = {
     cartTotalNumber,
     cartProductList,
     updatecartTotalNumber,
-    updatecartProducts
+    updatecartProducts,
+    setCartTotalNumber
   };
 
-  return <CartContext.Provider value={{cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts}} >{ children }</CartContext.Provider>
+  return <CartContext.Provider value={{cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts, setCartTotalNumber}} >{ children }</CartContext.Provider>
 };
 
 

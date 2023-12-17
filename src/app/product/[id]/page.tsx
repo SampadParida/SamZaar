@@ -13,8 +13,16 @@ import ProductCard from '../../components/ProductCard';
 export default function Category() {
   const params = useParams();
   const productId = (params) ? params.id : 1;
-  type ApiResType = { id:number, title:string, price:number, image:string, description:string };
-  const [data, setData] = useState<ApiResType | null>(null);
+  type ApiResType = {
+    category: string,
+    description: string,
+    id: number,
+    image: string,
+    price: number,
+    rating: object,
+    title: string
+  };
+  const [data, setData] = useState<ApiResType|any>();
   const [isLoading, setLoading] =  useState(true);
 
   const { cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts } = useCartContext();

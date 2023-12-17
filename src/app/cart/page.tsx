@@ -12,9 +12,9 @@ export default function Category() {
 
   console.log('cartProductList ======= ', cartProductList)
   const increaseCartNumber = () => {
-    const newProductForCart = data;
+    // const newProductForCart = data;
     updatecartTotalNumber(1);
-    updatecartProducts(newProductForCart);
+    // updatecartProducts(newProductForCart);
   };
 
   return (
@@ -23,10 +23,10 @@ export default function Category() {
         <div className={'col-span-12 gap-4 w-screen max-w-7xl mx-0 px-4'}>
         <h2 className={'font-bold text-2xl'}>Your Cart Items</h2>
         {
-          cartProductList.map((p)=>(
-            <div className={'bg-white p-3 rounded-xl border-inherit shadow items-center grid grid-cols-12 w-full my-3'}>
+          cartProductList.map((p:any)=>(
+            <div key={p.id} className={'bg-white p-3 rounded-xl border-inherit shadow items-center grid grid-cols-12 w-full my-3'}>
               <div className={'col-span-1 px-3'}>
-                <Image src={p.image} width={100}
+                <Image alt={p.title} src={p.image} width={100}
                 height={100} className="rounded-xl border-inherit shadow border-inherit bg-gray-300 mx-auto"/>
               </div>
               <div className={'col-span-11'}>
