@@ -21,7 +21,7 @@ export default function Category() {
   
 
   useEffect(() => {
-    const { data }: any = fetch(`https://fakestoreapi.com/products/category/${name}`)
+    const { data }: any = fetch(`https://fakestoreapi.com/products/category/${name}`, { cache: 'force-cache' })
       .then((res) => res.json())
       .then(data => {
         setData(data)

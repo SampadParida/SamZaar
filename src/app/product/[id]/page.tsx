@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import Image from 'next/image';
 import {useState, useEffect} from 'react';
 import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
-
+import { useCartContext } from '../../../contexts/cartcontext'
 import ProductCard from '../../components/ProductCard';
 
 // export const metadata: Metadata = {
@@ -16,10 +16,20 @@ export default function Category() {
   type ApiResType = { id:number, title:string, price:number, image:string, description:string };
   const [data, setData] = useState<ApiResType | null>(null);
   const [isLoading, setLoading] =  useState(true);
-  
+
+  const { cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts } = useCartContext();
+
+
+  const increaseCartNumber = () => {
+    const newProductForCart = data;
+    console.log('newProductForCart ==== ', newProductForCart)
+    // You can perform any calculation here
+    updatecartTotalNumber(1);
+    updatecartProducts(newProductForCart);
+  };
 
   useEffect(() => {
-    const { data }: any = fetch(`https://fakestoreapi.com/products/${productId}`)
+    const { data }: any = fetch(`https://fakestoreapi.com/products/${productId}`, { cache: 'force-cache' })
       .then((res) => res.json())
       .then(data => {
         setData(data)
@@ -43,7 +53,7 @@ export default function Category() {
         <div className={'md:col-span-8 col-span-12'}>
           <h1 className={'text-3xl mb-3'}>{data ? data.title : ''}</h1>
           <h1 className={'text-2xl mb-3 font-bold'}>Rs. {data ? data.price : ''}</h1>
-          <button className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>Add to Cart</button>
+          <button onClick={increaseCartNumber} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>Add to Cart</button>
           <p className={'mt-4'}>{data ? data.description : ''}</p>
         </div>
       </div>
