@@ -13,15 +13,17 @@ export default function Category() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  type ApiResType = { id:number, title:string, price:number, image:string };
+  type ApiResType = { _id:number, title:string, price:number, image:string };
   const [data, setData] = useState<ApiResType[] | null>(null);
   const [isLoading, setLoading] =  useState(true);
   
   const name = (params) ? params.name : 'jewelery';
-  
+  console.log('name === ', name)
 
   useEffect(() => {
-    const { data }: any = fetch(`https://fakestoreapi.com/products/category/${name}`, { cache: 'force-cache' })
+    const apiUrl = name !== "men's%20clothing" ? (`https://fakestoreapi.com/products/category/${name}`) : 'http://localhost:3001/product/list';
+    // , { cache: 'force-cache' }
+    const { data }: any = fetch(apiUrl)
       .then((res) => res.json())
       .then(data => {
         setData(data)
@@ -41,7 +43,7 @@ export default function Category() {
       ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-screen max-w-7xl mx-0 px-4">
         {products.map((p) => (
-          <ProductCard key={p.id} title={p.title} price={p.price} image={p.image} product_id={p.id}></ProductCard>
+          <ProductCard key={p._id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
         ))}
       </div>
       )}

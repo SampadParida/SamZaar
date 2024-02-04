@@ -4,6 +4,7 @@ import './globals.css';
 
 import Navbar from './components/Navbar';
 import { CartContextProvider } from '../contexts/cartcontext'
+import { AddressContextProvider } from '../contexts/addresscontext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -20,8 +21,10 @@ export default function RootLayout({children,}: { children: React.ReactNode }) {
       <html lang="en">
         <body className={inter.className}>
             <CartContextProvider>
+              <AddressContextProvider>
               <Navbar />
               {children}
+              </AddressContextProvider>
             </CartContextProvider>          
         </body>
       </html>

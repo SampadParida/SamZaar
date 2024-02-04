@@ -11,6 +11,7 @@ import ProductCard from '../../components/ProductCard';
 // }
 
 export default function Category() {
+  const router = useRouter()
   const params = useParams();
   const productId = (params) ? params.id : 1;
   type ApiResType = {
@@ -23,21 +24,27 @@ export default function Category() {
     title: string
   };
   const [data, setData] = useState<ApiResType|any>();
+  const [isAdded, setIsAdded] = useState<Boolean|any>(false);
   const [isLoading, setLoading] =  useState(true);
 
-  const { cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts } = useCartContext();
-
+  const { cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts, updatecartAmount } = useCartContext();
+  updatecartAmount();
 
   const increaseCartNumber = () => {
     const newProductForCart = data;
     console.log('newProductForCart ==== ', newProductForCart)
     // You can perform any calculation here
-    updatecartTotalNumber(1);
-    updatecartProducts(newProductForCart);
+    // updatecartTotalNumber(1);
+    updatecartProducts(newProductForCart, 'add');
+    setIsAdded(true)
   };
 
+  const jumpToCart = () => {
+    router.push('/cart')
+  }
+
   useEffect(() => {
-    const { data }: any = fetch(`https://fakestoreapi.com/products/${productId}`, { cache: 'force-cache' })
+    const { data }: any = fetch(`http://localhost:3001/product/${productId}`)
       .then((res) => res.json())
       .then(data => {
         setData(data)
@@ -61,7 +68,13 @@ export default function Category() {
         <div className={'md:col-span-8 col-span-12'}>
           <h1 className={'text-3xl mb-3'}>{data ? data.title : ''}</h1>
           <h1 className={'text-2xl mb-3 font-bold'}>Rs. {data ? data.price : ''}</h1>
-          <button onClick={increaseCartNumber} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>Add to Cart</button>
+          {isAdded ? (
+            <button onClick={jumpToCart} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>
+            View Cart</button>
+          ) : (
+            <button onClick={increaseCartNumber} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>
+            Add to Cart</button>
+          )}
           <p className={'mt-4'}>{data ? data.description : ''}</p>
         </div>
       </div>
