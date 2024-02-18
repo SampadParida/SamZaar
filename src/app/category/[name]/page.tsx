@@ -4,6 +4,7 @@ import Image from 'next/image';
 import {useState, useEffect} from 'react';
 import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
 import ProductCard from '../../components/ProductCard';
+import { useCommonContext } from '../../../contexts/commonContext';
 
 // export const metadata: Metadata = {
 //   title: 'Category',
@@ -15,21 +16,22 @@ export default function Category() {
   const searchParams = useSearchParams();
   type ApiResType = { _id:number, title:string, price:number, image:string };
   const [data, setData] = useState<ApiResType[] | null>(null);
-  const [isLoading, setLoading] =  useState(true);
+  const { isLoading, setIsLoading } = useCommonContext();
   
   const name = (params) ? params.name : 'jewelery';
   console.log('name === ', name)
 
   useEffect(() => {
-    const apiUrl = name !== "men's%20clothing" ? (`https://fakestoreapi.com/products/category/${name}`) : 'http://localhost:3001/product/list';
+    setIsLoading(true)
+    const apiUrl = name !== "men's%20clothing" ? (`https://fakestoreapi.com/products/category/${name}`) : `${process.env.NEXT_PUBLIC_API_BASE_URL}product/list`;
     // , { cache: 'force-cache' }
     const { data }: any = fetch(apiUrl)
       .then((res) => res.json())
       .then(data => {
         setData(data)
-        setLoading(false)
+        setIsLoading(false)
       })
-  }, [name])
+  }, [name, setIsLoading])
 
   const products = (data) ? data : [];
   return (

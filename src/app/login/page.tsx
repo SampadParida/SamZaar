@@ -6,8 +6,8 @@ import Cookies from 'js-cookie';
 
 
 
-export default function login() {
-    const router = useRouter()
+export default function Login() {
+    const router = useRouter();
     const tokenInCookie = Cookies.get('authToken');
     tokenInCookie ? router.push('/profile') : false
 
@@ -18,7 +18,7 @@ export default function login() {
             "email": email, "password": password
         }
         console.log('payload = ', payload)
-        await fetch(`http://localhost:3001/auth/login`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}auth/login`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

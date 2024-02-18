@@ -1,12 +1,13 @@
-'use client'
-import { Metadata } from 'next'
+"use client"
+import Cookies from 'js-cookie';
 import Image from 'next/image';
 import Head from 'next/head';
-import { useState, useEffect } from 'react';
-import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation'
 
 import { useCartContext } from '../../contexts/cartcontext'
 import { useAddressContext } from '../../contexts/addresscontext'
+import { useCommonContext } from '../../contexts/commonContext';
 
 declare global {
   interface Window {
@@ -27,44 +28,63 @@ interface order {
   notes: any,
   created_at: number
 }
-interface productProps {
-  category: string,
-  description: string,
-  _id: number,
-  image: string,
-  price: number,
-  rating: object,
-  title: string
-}
 
 export default function Category() {
   const [orderData, setOrderData] = useState<order | null>(null);
-  const { cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts, cartTotalAmount } = useCartContext();
-  const { address } = useAddressContext();
+  const { cartProductList, updatecartProducts, cartTotalAmount } = useCartContext();
+  const { address, setAddress } = useAddressContext();
+  const { isLoading, setIsLoading } = useCommonContext();
+
+  const fetchSelectedAddress = useCallback(async () => {
+    setIsLoading(true)
+    const aToken = `JWT ${Cookies.get('authToken')}`;
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}address/selected`, {
+      method: 'GET',
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": aToken,
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch selected address');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setAddress(data);
+      })
+      .catch(error => {
+        console.error('Error fetching selected address:', error);
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+      ;
+  }, [setAddress, setIsLoading]);
+
+  useEffect(() => {
+    if (address._id === 0) {
+      fetchSelectedAddress()
+    }
+  }, [address._id, fetchSelectedAddress])
+
 
   const addItem = (event: any) => {
     const productId = event.target.getAttribute('data-id');
     const product = cartProductList.find(item => item.product._id === productId);
-    console.log('productId = ', productId);
-    console.log('product = ', product?.product);
-    updatecartProducts(product?.product);
+    updatecartProducts(product?.product, 1, 'add');
   };
-
-  useEffect(() => {
-    console.log('cartTotalAmount = ', cartTotalAmount);
-  }, [cartTotalAmount]);
 
   const removeItem = (event: any) => {
     const productId = event.target.getAttribute('data-id');
     const product = cartProductList.find(item => item.product._id === productId)
-    console.log('productId = ', productId)
-    console.log('product = ', product?.product)
-    updatecartProducts(product?.product, 'remove')
+    updatecartProducts(product?.product, 1, 'remove')
   }
 
   const payload = {}
   const handlePayment = async (event: any) => {
-    const response = await fetch(`http://localhost:3001/order/create`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}order/create`, {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",
@@ -128,7 +148,7 @@ export default function Category() {
   return (
     <>
       <Head>
-        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script async src="https://checkout.razorpay.com/v1/checkout.js"></script>
       </Head>
 
       <main className="flex flex-col items-center justify-between md:px-24 py-5">
@@ -162,7 +182,7 @@ export default function Category() {
                       </div>
                       <div className={'col-span-8'}>
                         <h4 className={'font-bold'}>{p.product.title}</h4>
-                        <p>Rs.{p.product.price}</p>
+                        <p>Rs.{p?.product?.price}</p>
                       </div>
                       <div className={'col-span-3 text-xl justify-items-end'}>
                         <div className={'flex justify-end'}>

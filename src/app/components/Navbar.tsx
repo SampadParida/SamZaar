@@ -35,7 +35,7 @@ export default function Navbar() {
 	  				</div>
 	  			</div>
 	  			<div className={'flex items-center space-x-4'}>
-	  				<Link href={{ pathname : '/' }} className={'hidden md:inline py-5 px-2 hover:text-blue-500 transition duration-300'}>Profile</Link>
+	  				<Link href={{ pathname : '/profile' }} className={'hidden md:inline py-5 px-2 hover:text-blue-500 transition duration-300'}>Profile</Link>
   					<Link href={{ pathname : '/cart' }} className={(pathname == '/cart' ? 'border-b-[3px] border-blue-400 font-semibold' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>
   						<span className={'flex'}>
 	  						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className={"bi bi-cart"} viewBox="0 0 16 16">

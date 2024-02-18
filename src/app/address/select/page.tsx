@@ -1,10 +1,14 @@
 "use client"
 import { useAddressContext } from "@/contexts/addresscontext"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import Cookies from 'js-cookie';
+import { useCommonContext } from '../../../contexts/commonContext';
 
 
 interface addressProps {
+    _id: string,
     state: string,
     city: string,
     address: string,
@@ -13,82 +17,84 @@ interface addressProps {
     pincode: number,
     isSelected: boolean
 }
-var initialAddress = [
-    {
-        _id: 1,
-        state: 'Odisha',
-        city: 'Jagatsinghpur',
-        address: 'Dhabaleswar Colony, Tirtol',
-        landmark: "Opposite to Sarala Boy's hostel",
-        phone: '9583732596',
-        pincode: 754137,
-        isSelected: true
-    },
-    {
-        _id: 2,
-        state: 'Maharastra',
-        city: 'Mumbai',
-        address: '145/146 Powai Plazza',
-        landmark: "Opposite to powai signal",
-        phone: '9583732596',
-        pincode: 40076,
-        isSelected: false
-    }
-]
 
+const defaultAddress = {
+    _id: '0',
+    state: '',
+    city: '',
+    address: '',
+    landmark: '',
+    phone: '',
+    pincode: 0,
+    isSelected: true
+}
 
-export default function selectAddress() {
-    const [addresses, setAddresses] = useState([]);
+const defaultAddressArray:[] = []
+
+export default function SelectAddress() {
+    const { isLoading, setIsLoading } = useCommonContext();
+    const router = useRouter();
+    const [addresses, setAddresses] = useState(defaultAddressArray);
     const [addressChangeCount, setAddressChangeCount] = useState(0)
-    useEffect(() => {
-        const { data }: any = fetch(`http://localhost:3001/address/list`)
-            .then((res) => res.json())
-            .then(data => {
-                setAddresses(data)
-            })
-    }, [addressChangeCount])
-
-    const { setAddress } = useAddressContext();
-    const handleSelectCLick = async(event: any) => {
-        let selectedAddress = addresses.find((item) => item._id == event.target.getAttribute('data-id'));
-        if(selectedAddress){
-            await fetch(`http://localhost:3001/address/update/${selectedAddress._id}`, {
-                method: 'PUT',
+    const fetchAndSetAddress = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}address/list`, {
+                method: 'GET',
                 headers: {
                     "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ "isSelected": true })
-            })
-                .then((res) => res.json())
-                .then(async data => {
-                    let prevSelectedAddress = addresses.find((item) => item.isSelected === true);
-                    if(prevSelectedAddress){
-                        await fetch(`http://localhost:3001/address/update/${prevSelectedAddress._id}`, {
-                            method: 'PUT',
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({ "isSelected": false })
-                        })
-                            .then((res) => res.json())
-                            .then(d => {
-                                setAddressChangeCount((prevCount) => prevCount + 1)
-                                console.log('addressChangeCount === ', addressChangeCount)
-                            })
-                    }
-                })
+                    "Authorization": `JWT ${Cookies.get('authToken')}`,
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch addresses');
+            }
+            
+            const data = await response.json();
+            setAddresses(data);
+
+        } catch (e) {
+            setAddresses(defaultAddressArray)
         }
-    }
+    };
+    useEffect(() => {fetchAndSetAddress()}, [addressChangeCount])
+
+    const { setAddress } = useAddressContext();
+    const handleSelectClick = async (event: any) => {
+        let selectedAddress: addressProps | undefined = addresses.find((item: addressProps) => item._id == event.target.getAttribute('data-id') as string);
+        selectedAddress = selectedAddress == undefined ? defaultAddress : selectedAddress;
+        if (selectedAddress && selectedAddress?._id != '0') {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}address/select/${selectedAddress?._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `JWT ${Cookies.get('authToken')}`,
+                    },
+                    body: JSON.stringify({ "isSelected": true })
+                });
     
-    useEffect(() => {
-        console.log('here === ')
-        if (addresses) {
-            const selectedAddress = addresses.find((item) => item.isSelected === true);
-            if (selectedAddress) {
-                setAddress(selectedAddress);
+                if (!response.ok) {
+                    throw new Error('Failed to update address');
+                }
+    
+                const data = await response.json();
+                setAddressChangeCount((prevCount) => prevCount + 1);
+            } catch (error) {
+                console.error('Error updating address:', error);
             }
         }
-    }, [addresses])
+    }
+
+    useEffect(() => {
+        if (addresses) {
+            const selectedAddress = addresses.find((item: addressProps) => item.isSelected === true);
+            if (selectedAddress) {
+                setAddress(selectedAddress);
+                setIsLoading(false);
+            }
+        }
+    }, [addresses, setAddress, setIsLoading])
 
     return (
         <div className="flex flex-col items-center justify-between my-5 ">
@@ -97,7 +103,7 @@ export default function selectAddress() {
                     <h1 className="font-bold text-xl">Addresses</h1>
                     <hr className="my-3 border-gray-300" />
                     {
-                        addresses && addresses.map((address, index) => (
+                        addresses && addresses.map((address: addressProps, index) => (
                             <div key={address._id} className={`p-3 rounded-lg shadow w-full mb-3 ${address.isSelected ? 'bg-blue-500 text-white' : 'bg-white border border-inherit hover:shadow-lg'}`}>
                                 <div className="grid w-full grid-cols-12">
                                     <div className="col-span-10">{address.landmark && (<>{address.landmark},</>)} {address.address}, {address.city}, {address.pincode}, {address.phone}</div>
@@ -105,7 +111,7 @@ export default function selectAddress() {
                                         {address.isSelected ? (
                                             <p className="text-right">Selected</p>
                                         ) : (
-                                            <button data-id={address._id} onClick={handleSelectCLick} className="text-right w-full text-blue-500">Select</button>
+                                            <button data-id={address._id} onClick={handleSelectClick} className="text-right w-full text-blue-500">Select</button>
                                         )}
                                     </div>
                                 </div>
@@ -113,6 +119,7 @@ export default function selectAddress() {
                             </div>
                         ))
                     }
+                    <Link href="/address/new" className={'p-3 border-2 border-blue-500 w-full rounded-lg mt-3 block text-center hover:bg-blue-100 font-bold'}>Add New Address</Link>
 
                 </div>
 

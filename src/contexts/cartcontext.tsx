@@ -1,5 +1,7 @@
 "use client";
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import Cookies from 'js-cookie';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useCommonContext } from './commonContext';
 
 interface productProps {
 	category: string,
@@ -16,13 +18,20 @@ interface cartItemProps {
 	quantity: number
 }
 
+interface cartProductProps {
+	product_id: string,
+	quantity: number,
+	amount: number,
+	_id: string
+}
+
 // CREATE INTERFACE
 interface cartContextProps {
 	cartTotalNumber: number,
 	cartProductList: cartItemProps[],
 	setCartTotalNumber: (value: number) => void,
 	updatecartTotalNumber: (increment: number) => void,
-	updatecartProducts: (product: any) => void,
+	updatecartProducts: (product: any, quantity: number | 1, action: 'remove' | 'add') => void,
 	cartTotalAmount: number,
 	updatecartAmount: React.Dispatch<React.SetStateAction<number>>
 }
@@ -33,50 +42,87 @@ const CartContext = createContext<cartContextProps | undefined>(undefined);
 
 // export const CartContextProvider: React.FC = ({ children }) => {
 export const CartContextProvider = ({ children }: { children: React.ReactNode }) => {
+	const { isLoading, setIsLoading } = useCommonContext();
 	const [cartTotalNumber, setCartTotalNumber] = useState<number>(0);
 	const updatecartTotalNumber = (increment: number) => {
 		setCartTotalNumber((prevTotalNumber) => { return prevTotalNumber + increment });
 	};
 
 	const [cartTotalAmount, setCartTotalAmount] = useState<number>(0);
-	const cartTotalAmountRef = useRef(cartTotalAmount);
+	const [cartProductList, setCartProductList] = useState<cartItemProps[]>([]);
 	const updatecartAmount = () => {
-		console.log('cartProductList = ', cartProductList)
 		const productPrices = cartProductList.map(item => item.product.price * item.quantity);
-		console.log('productPrices = ', productPrices)
 		const totalPrice = productPrices.reduce((accmulator, currentValue) => {
 			return accmulator + currentValue
 		}, 0);
-		console.log('totalPrice = ', totalPrice)
 		setCartTotalAmount(totalPrice);
-		console.log('cartTotalAmount > ', cartTotalAmount)
 	}
 
-	const [cartProductList, setCartProductList] = useState<cartItemProps[]>([]);
-	const updatecartProducts = (product: productProps, action: 'add' | 'remove' = 'add') => {
+	const updatecartProducts = async (product: productProps, quantity: number = 1, action: 'add' | 'remove' = 'add', callApi:boolean = true) => {
+		if(callApi){
+			setIsLoading(true)
+			const payload = {
+				"product_id": product?._id,
+				"quantity": 1,
+				"amount": product?.price,
+				"action": action
+			}
+			const AddressResp = await fetch(`http://localhost:3001/cart/update`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `JWT ${Cookies.get('authToken')}`,
+				},
+				body: JSON.stringify(payload)
+			});
+			const RespData = await AddressResp.json();
+			console.log('RespData ==== ', RespData)
+			setIsLoading(false)
+		}
 		const existingCartItem = cartProductList.find(item => item.product._id === product._id);
-		console.log('existingCartItem = ', existingCartItem)
 		if (existingCartItem) {
 			setCartProductList((prevCartProducts) => {
 				const updatedCartList = prevCartProducts.map((item) => item.product._id === existingCartItem.product._id
-					? { ...item, quantity: action === 'add' ? item.quantity + 1 : item.quantity - 1 }
+					? { ...item, quantity: action === 'add' ? item.quantity + quantity : item.quantity - quantity }
 					: item
 				);
 				return updatedCartList.filter(item => item.quantity > 0)
 			})
 		} else {
-			setCartProductList((prevCartProducts) => { 
-				console.log(prevCartProducts)
-				const newProduct = { product, quantity: 1 }
-				console.log('newProduct = ', newProduct)
+			setCartProductList((prevCartProducts) => {
+				const newProduct = { product, quantity: quantity }
 				const addedProduct = [...prevCartProducts, newProduct,]
-				console.log('addedProduct = ', addedProduct)
 				return addedProduct
-			});
+			});	
+			action === 'add' ? updatecartTotalNumber(1) : updatecartTotalNumber(-1);
 		}
-
-		action === 'add' ? updatecartTotalNumber(1) : updatecartTotalNumber(-1);
 	};
+
+	const fetchCartDetails = async () => {
+		let token = `JWT ${Cookies.get('authToken')}`;
+        try {
+			setIsLoading(true)
+			const cartRes = await fetch('http://localhost:3001/cart/details', {
+				method: 'GET',
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": token,
+				}
+			});
+			const RespData = await cartRes.json();
+			RespData.cart.products.map((p: cartProductProps, index: Number) => {
+				let product: any = p?.product_id;
+				let quantity: number = p?.quantity;
+				updatecartProducts(product, quantity, 'add', false);
+			})
+
+        } catch (e) {
+        }
+	}
+
+	useEffect(() => {
+		fetchCartDetails()
+	}, [])
 
 	useEffect(() => {
 		updatecartAmount();
@@ -92,12 +138,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 		updatecartAmount
 	};
 
-	return <CartContext.Provider value={{
-		cartTotalNumber,
-		updatecartTotalNumber, cartProductList,
-		updatecartProducts, setCartTotalNumber, cartTotalAmount,
-		updatecartAmount
-	}} >{children}</CartContext.Provider>
+	return <CartContext.Provider value={contextValue} >{children}</CartContext.Provider>
 };
 
 
