@@ -7,7 +7,7 @@ export default function Loader() {
     const { isLoading } = useCommonContext();
     return (
         <>
-            {
+            { isLoading &&
                 <div className="w-full h-full fixed left-0 right-0 top-0">
                     <div className="w-full bg-white h-full opacity-50"></div>
                     <div className="absolute left-0 right-0 top-0 text-center w-full">
