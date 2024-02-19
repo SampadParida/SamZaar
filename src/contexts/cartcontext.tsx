@@ -102,7 +102,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 		let token = `JWT ${Cookies.get('authToken')}`;
         try {
 			setIsLoading(true)
-			const cartRes = await fetch('http://localhost:3001/cart/details', {
+			const cartRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}cart/details`, {
 				method: 'GET',
 				headers: {
 					"Content-Type": "application/json",
