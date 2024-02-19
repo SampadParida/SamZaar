@@ -1,23 +1,26 @@
 'use client'
 import { Metadata } from 'next'
 import Image from 'next/image';
-import {useState, useEffect} from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
-import ProductCard from '../../components/ProductCard';
+// import ProductCard from '../../components/ProductCard';
 import { useCommonContext } from '../../../contexts/commonContext';
+import Loader from '@/app/components/LoaderSuspense';
 
 // export const metadata: Metadata = {
 //   title: 'Category',
 // }
 
+const ProductCard = lazy(() => import('@/app/components/ProductCard'))
+
 export default function Category() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
-  type ApiResType = { _id:number, title:string, price:number, image:string };
+  type ApiResType = { _id: number, title: string, price: number, image: string };
   const [data, setData] = useState<ApiResType[] | null>(null);
   const { isLoading, setIsLoading } = useCommonContext();
-  
+
   const name = (params) ? params.name : 'jewelery';
   console.log('name === ', name)
 
@@ -40,15 +43,13 @@ export default function Category() {
       <h2>Aap ka apna Samaan Bazaar</h2>
       <hr />
       <br />
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-screen max-w-7xl mx-0 px-4">
         {products.map((p) => (
-          <ProductCard key={p._id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
+          <Suspense key={`s-${p._id}`} fallback={<Loader />}>
+            <ProductCard key={p._id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
+          </Suspense>
         ))}
       </div>
-      )}
     </main>
   )
 }

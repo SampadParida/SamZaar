@@ -30,6 +30,13 @@ interface order {
 }
 
 export default function Category() {
+  const router = useRouter();
+  const authToken = Cookies.get('authToken');
+  useEffect(() => {
+      if (!authToken) {
+          router.push('/login')
+      }
+  }, [])
   const [orderData, setOrderData] = useState<order | null>(null);
   const { cartProductList, updatecartProducts, cartTotalAmount } = useCartContext();
   const { address, setAddress } = useAddressContext();
@@ -140,10 +147,8 @@ export default function Category() {
 
 
   }
-
-  const routr = useRouter()
   const handleChangeCLick = () => {
-    routr.push('/address/select')
+    router.push('/address/select')
   }
   return (
     <>

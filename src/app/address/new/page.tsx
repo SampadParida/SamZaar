@@ -1,9 +1,16 @@
 "use client"
 import Cookies from 'js-cookie';
 import { useRouter } from "next/navigation";
+import { useEffect } from 'react';
 
 export default function NewAddress() {
     const router = useRouter();
+    const authToken = Cookies.get('authToken');
+    useEffect(() => {
+        if (!authToken) {
+            router.push('/login')
+        }
+    }, [])
     const handleFormSubmission = async (formData:any) => {
         const payload = {
             "address" : formData.get('address'),
