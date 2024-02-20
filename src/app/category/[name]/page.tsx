@@ -43,13 +43,15 @@ export default function Category() {
       <h2>Aap ka apna Samaan Bazaar</h2>
       <hr />
       <br />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-screen max-w-7xl mx-0 px-4">
-        {products.map((p) => (
-          <Suspense key={`s-${p._id}`} fallback={<Loader />}>
-            <ProductCard key={p._id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
-          </Suspense>
-        ))}
-      </div>
+      <Suspense fallback={<Loader />}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-screen max-w-7xl mx-0 px-4">
+          {products.map((p) => (
+            <Suspense key={`s-${p._id}`} fallback={<Loader />}>
+              <ProductCard key={p._id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
+            </Suspense>
+          ))}
+        </div>
+      </Suspense>
     </main>
   )
 }
