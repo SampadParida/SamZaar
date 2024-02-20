@@ -27,8 +27,10 @@ interface cartProductProps {
 
 // CREATE INTERFACE
 interface cartContextProps {
+	fetchCartDetails: ()=>void,
 	cartTotalNumber: number,
 	cartProductList: cartItemProps[],
+	setCartProductList: (value: []) => void,
 	setCartTotalNumber: (value: number) => void,
 	updatecartTotalNumber: (increment: number) => void,
 	updatecartProducts: (product: any, quantity: number | 1, action: 'remove' | 'add') => void,
@@ -58,16 +60,16 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 		setCartTotalAmount(totalPrice);
 	}
 
-	const updatecartProducts = async (product: productProps, quantity: number = 1, action: 'add' | 'remove' = 'add', callApi:boolean = true) => {
-		if(callApi){
-			setIsLoading(true)
+	const updatecartProducts = async (product: productProps, quantity: number = 1, action: 'add' | 'remove' = 'add', callApi: boolean = true) => {
+		if (callApi) {
+			// setIsLoading(true)
 			const payload = {
 				"product_id": product?._id,
 				"quantity": 1,
 				"amount": product?.price,
 				"action": action
 			}
-			const AddressResp = await fetch(`http://localhost:3001/cart/update`, {
+			const AddressResp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}cart/update`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -76,8 +78,7 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 				body: JSON.stringify(payload)
 			});
 			const RespData = await AddressResp.json();
-			console.log('RespData ==== ', RespData)
-			setIsLoading(false)
+			// setIsLoading(false)
 		}
 		const existingCartItem = cartProductList.find(item => item.product._id === product._id);
 		if (existingCartItem) {
@@ -93,31 +94,33 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 				const newProduct = { product, quantity: quantity }
 				const addedProduct = [...prevCartProducts, newProduct,]
 				return addedProduct
-			});	
+			});
 			action === 'add' ? updatecartTotalNumber(1) : updatecartTotalNumber(-1);
 		}
 	};
 
 	const fetchCartDetails = async () => {
-		let token = `JWT ${Cookies.get('authToken')}`;
-        try {
-			setIsLoading(true)
-			const cartRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}cart/details`, {
-				method: 'GET',
-				headers: {
-					"Content-Type": "application/json",
-					"Authorization": token,
-				}
-			});
-			const RespData = await cartRes.json();
-			RespData.cart.products.map((p: cartProductProps, index: Number) => {
-				let product: any = p?.product_id;
-				let quantity: number = p?.quantity;
-				updatecartProducts(product, quantity, 'add', false);
-			})
+		let token = Cookies.get('authToken');
+		if (token) {
+			try {
+				// setIsLoading(true)
+				const cartRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}cart/details`, {
+					method: 'GET',
+					headers: {
+						"Content-Type": "application/json",
+						"Authorization": `JWT ${token}`,
+					}
+				});
+				const RespData = await cartRes.json();
+				RespData.cart.products.map((p: cartProductProps, index: Number) => {
+					let product: any = p?.product_id;
+					let quantity: number = p?.quantity;
+					updatecartProducts(product, quantity, 'add', false);
+				})
 
-        } catch (e) {
-        }
+			} catch (e) {
+			}
+		}
 	}
 
 	useEffect(() => {
@@ -129,8 +132,10 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 	}, [cartProductList])
 
 	const contextValue: cartContextProps = {
+		fetchCartDetails,
 		cartTotalNumber,
 		cartProductList,
+		setCartProductList,
 		updatecartTotalNumber,
 		updatecartProducts,
 		setCartTotalNumber,

@@ -5,12 +5,16 @@ import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import Link from 'next/link';
 
+import { useCartContext } from '@/contexts/cartcontext';
+
 
 
 export default function Login() {
     const router = useRouter();
     const tokenInCookie = Cookies.get('authToken');
-    tokenInCookie ? router.push('/profile') : false
+    tokenInCookie ? router.push('/profile') : false;
+
+    const { fetchCartDetails } = useCartContext();
 
     const loginAction = async (formData: any) => {
         let email = formData.get('email');
@@ -26,12 +30,19 @@ export default function Login() {
             },
             body: JSON.stringify(payload)
         })
-            .then((res) => res.json())
+            .then((res) => {
+                console.log('login res = ', res)
+                return res.json()
+            })
             .then(data => {
                 console.log('data = ', data)
                 Cookies.set('authToken', data.token, { expires: 365 })
                 // document.cookie = `authToken=${data.token}; max-age=3600`;
+                fetchCartDetails();
                 router.push('/profile')
+            })
+            .catch((e)=>{
+                console.log('logon error : ', e)
             })
     }
     return (
