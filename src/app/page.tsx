@@ -11,7 +11,7 @@ export default function Home() {
   
 
   useEffect(() => {
-    const { data }: any = fetch(`https://fakestoreapi.com/products`, { cache: 'force-cache' })
+    const { data }: any = fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}product/list?category=all`, { cache: 'force-cache' })
       .then((res) => res.json())
       .then(data => {
         setData(data)
@@ -36,6 +36,16 @@ export default function Home() {
         ))}
       </div>
       )}
+      {
+        !isLoading && products.length == 0 &&
+        <div className='text-center'>
+          <Image src={'/image/error-sorry.jpg'} alt={'No content'} width="200" height="200" className='inline-block rounded-full' />
+          <br/>
+          <br/>
+          <h3 className='text-2xl'>SORRY!</h3>
+          <b>This filter type having no product at this moment.</b>
+        </div>
+      }
 
     </main>
   )

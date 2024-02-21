@@ -21,20 +21,18 @@ export default function Category() {
   const [data, setData] = useState<ApiResType[] | null>(null);
   const { isLoading, setIsLoading } = useCommonContext();
 
-  const name = (params) ? params.name : 'jewelery';
-  console.log('name === ', name)
+  const category = (params) ? params.name : 'jewelery';
 
   useEffect(() => {
-    setIsLoading(true)
-    const apiUrl = name !== "men's%20clothing" ? (`https://fakestoreapi.com/products/category/${name}`) : `${process.env.NEXT_PUBLIC_API_BASE_URL}product/list`;
-    // , { cache: 'force-cache' }
-    const { data }: any = fetch(apiUrl)
+    setIsLoading(true);
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}product/list?category=${category}` ;
+    fetch(apiUrl)
       .then((res) => res.json())
       .then(data => {
         setData(data)
         setIsLoading(false)
       })
-  }, [name, setIsLoading])
+  }, [category, setIsLoading])
 
   const products = (data) ? data : [];
   return (
@@ -44,6 +42,16 @@ export default function Category() {
       <hr />
       <br />
       <Suspense fallback={<Loader />}>
+        {
+          !isLoading && products.length == 0 &&
+          <div className='text-center'>
+            <Image src={'/image/error-sorry.jpg'} alt={'No content'} width="200" height="200" className='inline-block rounded-full' />
+            <br/>
+            <br/>
+            <h3 className='text-2xl'>SORRY!</h3>
+            <b>This filter type having no product at this moment.</b>
+          </div>
+        }
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-screen max-w-7xl mx-0 px-4">
           {products.map((p) => (
             <Suspense key={`s-${p._id}`} fallback={<Loader />}>
