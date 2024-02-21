@@ -23,7 +23,7 @@ export default function Navbar() {
 				<div className={'flex justify-between items-center'}>
 					<div className={'flex space-x-4'}>
 						<Link href={{ pathname: '/' }} className={'flex items-center py-5 px-2 space-x-1'}>
-							<Image src={'/image/logo.png'} alt={'Empty cart'} width="28" height="28" className='inline-block rounded-full' />
+							<Image src={'/image/logo.png'} alt={'Empty cart'} width="28" height="28" className='inline-block' />
 							<span className={'font-bold'}>SamZaar</span>
 						</Link>
 						<div className={'hidden md:flex items-center space-x-4 '}>

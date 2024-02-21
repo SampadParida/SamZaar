@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import Link from 'next/link';
 
 import { useCartContext } from '@/contexts/cartcontext';
+import Image from 'next/image';
 
 
 
@@ -49,8 +50,10 @@ export default function Login() {
         <main className="flex flex-col items-center justify-between px-24 py-5">
             <div className={'grid grid-cols-1 gap-4 w-screen max-w-7xl mx-0 px-4'}>
                 <div className={'flex justify-center items-center'} style={{ minHeight: '80vh' }}>
-                    <div className={'bg-white text-center px-10 py-10 rounded-lg shadow-xl'} style={{ 'minWidth': '500px' }}>
-                        <h1 className={'text-center'}><b>PLEASE LOG IN</b></h1>
+                <div className={'bg-white text-center px-10 py-5 rounded-lg shadow-xl'}>
+                        <Image src={'/image/login.png'} alt="signup" width="150" height="150" className='inline-block' />
+                        <h1 className={'text-center'}><b>PLEASE LOGIN</b></h1>
+                        <br />
                         <form className={'w-full'} action={loginAction}>
                             <div className={'mb-3'}>
                                 <label className={'flex'}>Email</label>
