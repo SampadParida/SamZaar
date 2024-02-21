@@ -17,7 +17,7 @@ export default function ProductCard({ key, title, price, image, product_id }: Ch
 				src={image}
 				width={100}
 				height={100}
-				className="min-h-[300px] max-h-[300px] w-full border-inherit bg-gray-300 mx-auto"
+				className="min-h-[300px] max-h-[300px] w-full border-inherit bg-white mx-auto px-4 py-4"
 				layout="responsive"
 			/>
 			<br />

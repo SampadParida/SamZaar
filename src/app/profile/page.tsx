@@ -27,10 +27,11 @@ export default function Profile() {
     }, [])
     const decoded: JwtPayload | null = authToken ? jwtDecode(authToken) : null;
     const [profileData, setProfileData] = useState<UserState | null>(decoded);
-    const { setCartProductList } = useCartContext()
+    const { setCartProductList, setCartTotalNumber } = useCartContext()
     const logOut = () => {
         Cookies.remove('authToken');
         setCartProductList([]);
+        setCartTotalNumber(0);
         router.push('/login');
     }
     return (

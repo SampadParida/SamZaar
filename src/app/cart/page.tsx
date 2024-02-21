@@ -33,9 +33,9 @@ export default function Category() {
   const router = useRouter();
   const authToken = Cookies.get('authToken');
   useEffect(() => {
-      if (!authToken) {
-          router.push('/login')
-      }
+    if (!authToken) {
+      router.push('/login')
+    }
   }, [])
   const [orderData, setOrderData] = useState<order | null>(null);
   const { cartProductList, updatecartProducts, cartTotalAmount } = useCartContext();
@@ -71,10 +71,10 @@ export default function Category() {
   }, [setAddress, setIsLoading]);
 
   useEffect(() => {
-    if (address._id === 0) {
+    if (address?._id === 0) {
       fetchSelectedAddress()
     }
-  }, [address._id, fetchSelectedAddress])
+  }, [address?._id, fetchSelectedAddress])
 
 
   const addItem = (event: any) => {
@@ -150,6 +150,9 @@ export default function Category() {
   const handleChangeCLick = () => {
     router.push('/address/select')
   }
+  const handleBrowseProductClick = () => {
+    router.push('/')
+  }
   return (
     <>
       <Head>
@@ -164,7 +167,15 @@ export default function Category() {
               <hr className={'my-3'} />
               <div className={'grid grid-cols-4'}>
                 <div className={'col-span-3'}>
-                  {address.landmark}, {address.address}, {address.city}, {address.pincode}, {address.phone}
+                  {
+                    address &&
+                    <>{address.landmark}, {address.address}, {address.city}, {address.pincode}, {address.phone}</>
+                  }
+                  {
+                    !address &&
+                    <>You have not selected any address.</>
+                  }
+
                 </div>
                 <div className={'col-span-1 justify-items-end'}>
                   <div className={'flex justify-end'}>
@@ -178,6 +189,18 @@ export default function Category() {
             <h2 className={'font-bold text-xl'}>Your Cart Items</h2>
             <div className="grid md:grid-cols-4 grid-cols-1 gap-4 mx-0">
               <div className='md:col-span-3'>
+                {
+                  cartProductList.length === 0 &&
+                  <div className='bg-white p-3 rounded-xl border-inherit justify-center shadow items-center grid grid-cols-1 w-full my-3 text-center'>
+                    <div className="flex items-center justify-center">
+                      <Image src={'/image/empty-cart.png'} alt={'Empty cart'} width="200" height="200" className='inline-block rounded-full' />
+                    </div>
+                    <h3 className='font-bold'>YOUR CART IS EMPTY</h3>
+                    <div>
+                    <button className={'bg-blue-600 text-white px-5 py-3 rounded-lg my-3 w-auto'} onClick={handleBrowseProductClick}>Brows Products</button>
+                    </div>
+                  </div>
+                }
                 {
                   cartProductList.map((p: any) => (
                     <div key={p.product._id} className={'bg-white p-3 rounded-xl border-inherit shadow items-center grid grid-cols-12 w-full my-3'}>
@@ -201,12 +224,15 @@ export default function Category() {
                 }
               </div>
               <div>
-                <div className={'bg-white rounded-xl border-inherit shadow p-3 my-3'}>
-                  <h2 className={'font-bold text-xl'}>Place Order</h2>
-                  <hr className={'my-3'} />
-                  <h1 className={''}>Total Amount : Rs.<b>{cartTotalAmount}</b></h1>
-                  <button className={'bg-blue-600 text-white px-5 py-3 rounded-lg my-3 w-full'} onClick={handlePayment}>Pay Now</button>
-                </div>
+                {
+                  cartProductList.length > 0 &&
+                  <div className={'bg-white rounded-xl border-inherit shadow p-3 my-3'}>
+                    <h2 className={'font-bold text-xl'}>Place Order</h2>
+                    <hr className={'my-3'} />
+                    <h1 className={''}>Total Amount : Rs.<b>{cartTotalAmount}</b></h1>
+                    <button className={'bg-blue-600 text-white px-5 py-3 rounded-lg my-3 w-full'} onClick={handlePayment}>Pay Now</button>
+                  </div>
+                }
               </div>
             </div>
           </div>

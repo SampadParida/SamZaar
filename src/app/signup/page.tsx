@@ -17,6 +17,7 @@ export default function SignUp() {
             "email": email, "password": password, "name": name
         }
         console.log('payload = ', payload)
+
         await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}auth/signup`, {
             method: 'POST',
             headers: {
@@ -24,12 +25,20 @@ export default function SignUp() {
             },
             body: JSON.stringify(payload)
         })
-            .then((res) => res.json())
+            .then(async (res) => {
+                console.log('res = ', res)
+                if (!res.ok) {
+                    return res.text().then(text => { throw new Error(text) })
+                }
+                return res.json()
+            })
             .then(data => {
                 console.log('data = ', data)
                 Cookies.set('authToken', data.token, { expires: 365 })
-                // document.cookie = `authToken=${data.token}; max-age=3600`;
                 router.push('/profile')
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
             })
     }
     return (
