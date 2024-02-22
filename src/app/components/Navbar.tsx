@@ -59,10 +59,10 @@ export default function Navbar() {
 
 			{/* MOBILE MENU LIST */}
 			<div className={isMobileMenuActive ? 'md:hidden' : 'hidden'}>
-				<Link href={{ pathname: '/category/jewelery' }} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Jewelery</Link>
-				<Link href={{ pathname: '/category/electronics' }} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Elctronics</Link>
-				<Link href={{ pathname: "/category/men_clothing" }} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Men</Link>
-				<Link href={{ pathname: "/category/women_clothing" }} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Women</Link>
+				<Link href={{ pathname: '/category/jewelery' }}  onClick={onMobileMenuClick} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Jewelery</Link>
+				<Link href={{ pathname: '/category/electronics' }}  onClick={onMobileMenuClick} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Elctronics</Link>
+				<Link href={{ pathname: "/category/men_clothing" }}  onClick={onMobileMenuClick} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Men</Link>
+				<Link href={{ pathname: "/category/women_clothing" }}  onClick={onMobileMenuClick} className={'block py-3 px-4 hover:bg-gray-300 transition duration-300'}>Women</Link>
 			</div>
 		</nav>
 	)
