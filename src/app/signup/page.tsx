@@ -10,12 +10,13 @@ import { useRef, useState } from "react";
 
 
 export default function SignUp() {
-    const passwordRef:any = useRef(null);
-    const emailRef:any = useRef(null);
-    const nameRef:any = useRef(null);
+    const passwordRef: any = useRef(null);
+    const emailRef: any = useRef(null);
+    const nameRef: any = useRef(null);
+    const buttonRef: any = useRef(null);
     const [errorMessage, setErrorMessage] = useState('');
     const router = useRouter();
-    const signUpAction = async (e:any) => {
+    const signUpAction = async (e: any) => {
         e.preventDefault();
         let passwordVal = passwordRef?.current?.value;
         let emailVal = emailRef?.current?.value;
@@ -25,26 +26,28 @@ export default function SignUp() {
 
         if (passwordVal.length < 8) {
             setErrorMessage('Password must be at least 8 characters!');
-            setTimeout(()=>{
+            setTimeout(() => {
                 setErrorMessage('');
             }, 3000)
-            
+
         } else if (!specialChars.test(passwordVal)) {
             setErrorMessage('Password must have a special character!');
-            setTimeout(()=>{
+            setTimeout(() => {
                 setErrorMessage('');
             }, 3000)
         } else if (passwordVal === passwordVal.toLowerCase()) {
             setErrorMessage('Password must have a capital letter!');
-            setTimeout(()=>{
+            setTimeout(() => {
                 setErrorMessage('');
             }, 3000)
         } else {
+            if (buttonRef && buttonRef?.current) {
+                buttonRef!.current!.disabled = !buttonRef!.current!.disabled;
+                buttonRef!.current!.innerHTML = `Processing...`;
+            }
             let payload = {
                 "email": emailVal, "password": passwordVal, "name": nameVal
             }
-            console.log('payload = ', payload)
-            
             await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}auth/signup`, {
                 method: 'POST',
                 headers: {
@@ -66,9 +69,13 @@ export default function SignUp() {
                 })
                 .catch(error => {
                     setErrorMessage(error.message);
-                    setTimeout(()=>{
+                    setTimeout(() => {
                         setErrorMessage('');
-                    }, 3000)
+                    }, 3000);
+                    if (buttonRef && buttonRef?.current) {
+                        buttonRef!.current!.disabled = !buttonRef!.current!.disabled;
+                        buttonRef!.current!.innerHTML = 'SUBMIT';
+                    }
                 })
         }
 
@@ -79,7 +86,7 @@ export default function SignUp() {
                 errorMessage && errorMessage.length > 0 &&
                 <div className="bg-red-500 px-3 py-3 fixed right-4 rounded-lg text-white shadow-xl duration-700">{errorMessage}</div>
             }
-            
+
             <div className={'grid grid-cols-1 gap-4 w-screen max-w-7xl mx-0 px-4'}>
                 <div className={'flex justify-center items-center'} style={{ minHeight: '80vh' }}>
                     <div className={'bg-white text-center px-10 py-5 rounded-lg shadow-xl'}>
@@ -100,7 +107,9 @@ export default function SignUp() {
                                 <input ref={passwordRef} required name="password" type="password" className={'border flex w-full rounded px-2 py-3 bg-slate-100 shadow-inner'} />
                             </div>
                             <div>
-                                <button type="submit" className={'border w-full rounded px-2 py-2 bg-blue-700 text-white items-center'}>SUBMIT</button>
+                                <button ref={buttonRef} type="submit" className={'border w-full rounded px-2 py-2 bg-blue-700 text-white items-center disabled:opacity-75'}>
+                                    SUBMIT
+                                </button>
                             </div>
                             <div>
                                 <hr className='my-4' />
