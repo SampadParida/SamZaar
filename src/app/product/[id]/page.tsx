@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
 import { useCartContext } from '../../../contexts/cartcontext'
 import { useCommonContext } from '../../../contexts/commonContext';
+import Loader from '@/app/components/LoaderSuspense';
 
 // export const metadata: Metadata = {
 //   title: 'Category',
@@ -66,32 +67,41 @@ export default function Category() {
   }, [productId, setIsLoading])
 
   return (
-    <main className="flex flex-col items-center justify-between px-24 py-5">
-      <div className={'grid grid-cols-12 gap-4 w-screen max-w-7xl mx-0 px-4'}>
-        <div className={'md:col-span-4 col-span-12'}>
-          <Image
-            alt="The guitarist in the concert."
-            src={data ? (data.image ? data.image : '') : ''}
-            width={100}
-            height={100}
-            className="min-h-[300px] rounded-xl border-inherit shadow w-full border-inherit bg-gray-300 mx-auto"
-            layout="responsive"
-          />
+    <>
+      {isLoading ? (
+        <div className='flex items-center justify-center align-middle px-50 py-50 h-screen'>
+          <Loader />
         </div>
-        <div className={'md:col-span-8 col-span-12'}>
-          <h1 className={'text-3xl mb-3'}>{data ? data.title : ''}</h1>
-          <h1 className={'text-2xl mb-3 font-bold'}>Rs. {data ? data.price : ''}</h1>
-          {isAdded ? (
-            <button onClick={jumpToCart} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>
-              View Cart</button>
-          ) : (
-            <button onClick={increaseCartNumber} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>
-              Add to Cart</button>
-          )}
-          <p className={'mt-4'}>{data ? data.description : ''}</p>
-        </div>
-      </div>
+      ) : (
+        <div>
+          <main className="flex flex-col items-center justify-between px-24 py-5">
+            <div className={'grid grid-cols-12 gap-4 w-screen max-w-7xl mx-0 px-4'}>
+              <div className={'md:col-span-4 col-span-12'}>
+                <Image
+                  alt="The guitarist in the concert."
+                  src={data ? (data.image ? data.image : '') : ''}
+                  width={100}
+                  height={100}
+                  className="min-h-[300px] rounded-xl border-inherit shadow w-full border-inherit bg-gray-300 mx-auto"
+                  layout="responsive"
+                />
+              </div>
+              <div className={'md:col-span-8 col-span-12'}>
 
-    </main>
+                <h1 className={'text-3xl mb-3'}>{data ? data.title : ''}</h1>
+                <h1 className={'text-2xl mb-3 font-bold'}>Rs. {data ? data.price : ''}</h1>
+                {isAdded ? (
+                  <button onClick={jumpToCart} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>
+                    View Cart</button>
+                ) : (
+                  <button onClick={increaseCartNumber} className={'bg-sky-500 border-0 text-white px-7 py-5 rounded-xl text-xl'}>
+                    Add to Cart</button>
+                )}
+                <p className={'mt-4'}>{data ? data.description : ''}</p>
+              </div>
+            </div>
+          </main>
+        </div>)}
+    </>
   )
 }

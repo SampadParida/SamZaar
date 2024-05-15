@@ -15,7 +15,7 @@ const defaultLoading = {
 const CommonContext = createContext<contextProps>(defaultLoading);
 
 export const CommonContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const contextValue = {
         isLoading,
         setIsLoading

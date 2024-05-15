@@ -35,13 +35,17 @@ export default function Category() {
   }, [category, setIsLoading])
 
   const products = (data) ? data : [];
+
+  const loadingElement = (
+    <div className='my-12'><Loader /></div>
+  )
   return (
     <main className="flex flex-col items-center justify-between px-24 py-5">
       <h1 className={'font-bold text-5xl'}>SamZaar</h1>
       <h2>Aap ka apna Samaan Bazaar</h2>
       <hr />
       <br />
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={loadingElement}>
         {
           !isLoading && products.length == 0 &&
           <div className='text-center'>
@@ -54,7 +58,7 @@ export default function Category() {
         }
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-screen max-w-7xl mx-0 px-4">
           {products.map((p) => (
-            <Suspense key={`s-${p._id}`} fallback={<Loader />}>
+            <Suspense key={`s-${p._id}`} fallback={loadingElement}>
               <ProductCard key={p._id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
             </Suspense>
           ))}

@@ -35,7 +35,7 @@ export default function Navbar() {
 					</div>
 					<div className={'flex items-center space-x-4'}>
 						<Link href={{ pathname: '/profile' }} className={'md:inline py-5 px-2 hover:text-blue-500 transition duration-300'}>
-							<svg  width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <circle cx="12" cy="7" r="4" />  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+							<svg  width="20" height="20" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <circle cx="12" cy="7" r="4" />  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
 						</Link>
 						<Link href={{ pathname: '/cart' }} className={(pathname == '/cart' ? 'border-b-[3px] border-blue-400 font-semibold' : '') + ' py-5 px-2 hover:text-blue-500 transition duration-300'}>
 							<span className={'flex'}>
@@ -48,7 +48,7 @@ export default function Navbar() {
 						{/* MOBILE MENU CONTROLLER */}
 						<div className={'md:hidden flex items-center cursor-pointer font-bold text-gray-600'} onClick={onMobileMenuClick}>
 							<svg  width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
 							</svg>
 
 						</div>
