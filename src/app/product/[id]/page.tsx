@@ -1,9 +1,7 @@
 'use client'
-import Cookies from 'js-cookie';
-import { Metadata } from 'next'
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useRouter, usePathname, useSearchParams, useParams } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useCartContext } from '../../../contexts/cartcontext'
 import { useCommonContext } from '../../../contexts/commonContext';
 import Loader from '@/app/components/LoaderSuspense';
@@ -28,26 +26,9 @@ export default function Category() {
   };
   const [data, setData] = useState<ApiResType | any>();
   const [isAdded, setIsAdded] = useState<Boolean | any>(false);
-  const { cartTotalNumber, updatecartTotalNumber, cartProductList, updatecartProducts, updatecartAmount } = useCartContext();
+  const { updatecartProducts } = useCartContext();
 
   const increaseCartNumber = async () => {
-    setIsLoading(true);
-    const payload = {
-      "product_id": data?._id,
-      "quantity": 1,
-      "amount": data?.price
-    }
-    const ProductAddResp = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}cart/update`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `JWT ${Cookies.get('authToken')}`,
-      },
-      body: JSON.stringify(payload)
-    });
-    const RespData = await ProductAddResp.json();
-    setIsLoading(false);
-    // updatecartAmount();
     updatecartProducts(data, 1, 'add');
     setIsAdded(true)
   };
@@ -69,7 +50,7 @@ export default function Category() {
   return (
     <>
       {isLoading ? (
-        <div className='flex items-center justify-center align-middle px-50 py-50 h-screen'>
+        <div className='flex items-center justify-center align-middle px-50 py-50 h-60'>
           <Loader />
         </div>
       ) : (

@@ -95,8 +95,8 @@ export const CartContextProvider = ({ children }: { children: React.ReactNode })
 				const addedProduct = [...prevCartProducts, newProduct,]
 				return addedProduct
 			});
-			action === 'add' ? updatecartTotalNumber(1) : updatecartTotalNumber(-1);
 		}
+		action === 'add' ? updatecartTotalNumber(quantity) : updatecartTotalNumber(-quantity);
 	};
 
 	const fetchCartDetails = async () => {

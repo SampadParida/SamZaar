@@ -9,6 +9,8 @@ import { useCartContext } from '../../contexts/cartcontext'
 import { useAddressContext } from '../../contexts/addresscontext'
 import { useCommonContext } from '../../contexts/commonContext';
 
+import Loader from '@/app/components/LoaderSuspense';
+
 declare global {
   interface Window {
     Razorpay: any; // Use 'any' if you're not specifying a detailed type
@@ -107,11 +109,11 @@ export default function Category() {
 
     var options = {
       "key": "rzp_test_muETAI3mfibeyR", // Enter the Key ID generated from the Dashboard
-      "amount": "5000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      "amount": cartTotalAmount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
       "currency": "INR",
       "name": "SamZaar", //your business name
       "description": "Test Transaction",
-      "image": "https://example.com/your_logo",
+      "image": "https://www.samdev.fun/_next/image?url=%2Fimage%2Flogo.png&w=32&q=75",
       "order_id": orderData?.id || null, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
       "handler": function (resp: any) {
         alert(resp.razorpay_payment_id);
@@ -158,87 +160,93 @@ export default function Category() {
       <Head>
         <script async src="https://checkout.razorpay.com/v1/checkout.js"></script>
       </Head>
+      {isLoading ? (
+        <div className='flex items-center justify-center align-middle px-50 py-50 h-60'>
+          <Loader />
+        </div>
+      ) : (
+        <main className="flex flex-col items-center justify-between md:px-24 py-5">
+          <div className={'grid grid-cols-6 max-w-7xl mx-0 px-4 w-full'}>
+            <div className={'col-span-12 mx-0 px-4'}>
+              <div className={'bg-white rounded-xl border-inherit shadow my-3 p-3'}>
+                <b>Delivering to</b>
+                <hr className={'my-3'} />
+                <div className={'grid grid-cols-4'}>
+                  <div className={'col-span-3'}>
+                    {
+                      address &&
+                      <>{address.landmark}, {address.address}, {address.city}, {address.pincode}, {address.phone}</>
+                    }
+                    {
+                      !address &&
+                      <>You have not selected any address.</>
+                    }
 
-      <main className="flex flex-col items-center justify-between md:px-24 py-5">
-        <div className={'grid grid-cols-6 max-w-7xl mx-0 px-4 w-full'}>
-          <div className={'col-span-12 mx-0 px-4'}>
-            <div className={'bg-white rounded-xl border-inherit shadow my-3 p-3'}>
-              <b>Delivering to</b>
-              <hr className={'my-3'} />
-              <div className={'grid grid-cols-4'}>
-                <div className={'col-span-3'}>
-                  {
-                    address &&
-                    <>{address.landmark}, {address.address}, {address.city}, {address.pincode}, {address.phone}</>
-                  }
-                  {
-                    !address &&
-                    <>You have not selected any address.</>
-                  }
-
-                </div>
-                <div className={'col-span-1 justify-items-end'}>
-                  <div className={'flex justify-end'}>
-                    <button onClick={handleChangeCLick} className={'border rounded-lg px-3 py-2 shadow border-blue-500 text-blue-500 text-sm'}>Change</button>
+                  </div>
+                  <div className={'col-span-1 justify-items-end'}>
+                    <div className={'flex justify-end'}>
+                      <button onClick={handleChangeCLick} className={'border rounded-lg px-3 py-2 shadow border-blue-500 text-blue-500 text-sm'}>Change</button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className={'col-span-12 mx-0 px-4'}>
-            <h2 className={'font-bold text-xl'}>Your Cart Items</h2>
-            <div className="grid md:grid-cols-4 grid-cols-1 gap-4 mx-0">
-              <div className='md:col-span-3'>
-                {
-                  cartProductList.length === 0 &&
-                  <div className='bg-white p-3 rounded-xl border-inherit justify-center shadow items-center grid grid-cols-1 w-full my-3 text-center'>
-                    <div className="flex items-center justify-center">
-                      <Image src={'/image/empty-cart.png'} alt={'Empty cart'} width="200" height="200" className='inline-block rounded-full' />
-                    </div>
-                    <h3 className='font-bold'>YOUR CART IS EMPTY</h3>
-                    <div>
-                    <button className={'bg-blue-600 text-white px-5 py-3 rounded-lg my-3 w-auto'} onClick={handleBrowseProductClick}>Brows Products</button>
-                    </div>
-                  </div>
-                }
-                {
-                  cartProductList.map((p: any) => (
-                    <div key={p.product._id} className={'bg-white p-3 rounded-xl border-inherit shadow items-center grid grid-cols-12 w-full my-3'}>
-                      <div className={'col-span-1 px-3'}>
-                        <Image alt={p.product.title} src={p.product.image} width={100}
-                          height={100} className="rounded-xl border-inherit shadow border-inherit bg-gray-300 mx-auto" />
+            <div className={'col-span-12 mx-0 px-4'}>
+              <h2 className={'font-bold text-xl'}>Your Cart Items</h2>
+              <div className="grid md:grid-cols-4 grid-cols-1 gap-4 mx-0">
+                <div className='md:col-span-3'>
+                  {
+                    cartProductList.length === 0 &&
+                    <div className='bg-white p-3 rounded-xl border-inherit justify-center shadow items-center grid grid-cols-1 w-full my-3 text-center'>
+                      <div className="flex items-center justify-center">
+                        <Image src={'/image/empty-cart.png'} alt={'Empty cart'} width="200" height="200" className='inline-block rounded-full' />
                       </div>
-                      <div className={'col-span-8'}>
-                        <h4 className={'font-bold'}>{p.product.title}</h4>
-                        <p>Rs.{p?.product?.price}</p>
+                      <h3 className='font-bold'>YOUR CART IS EMPTY</h3>
+                      <div>
+                        <button className={'bg-blue-600 text-white px-5 py-3 rounded-lg my-3 w-auto'} onClick={handleBrowseProductClick}>Brows Products</button>
                       </div>
-                      <div className={'col-span-3 text-xl justify-items-end'}>
-                        <div className={'flex justify-end'}>
-                          <button data-id={p.product._id} onClick={removeItem} className={'border-inherit shadow-md rounded-md px-3'}>-</button>
-                          <p className={'px-2'}>{p.quantity}</p>
-                          <button data-id={p.product._id} onClick={addItem} className={'border-inherit shadow-md rounded-md px-3'}>+</button>
+                    </div>
+                  }
+                  {
+                    cartProductList.map((p: any) => (
+                      <div key={p.product._id} className={'bg-white p-3 rounded-xl border-inherit shadow items-center grid grid-cols-12 w-full my-3'}>
+                        <div className={'col-span-1 px-3'}>
+                          <Image alt={p.product.title} src={p.product.image} width={100}
+                            height={100} className="rounded-xl border-inherit shadow border-inherit bg-gray-300 mx-auto" />
+                        </div>
+                        <div className={'col-span-8'}>
+                          <h4 className={'font-bold'}>{p.product.title}</h4>
+                          <p>Rs.{p?.product?.price}</p>
+                        </div>
+                        <div className={'col-span-3 text-xl justify-items-end'}>
+                          <div className={'flex justify-end'}>
+                            <button data-id={p.product._id} onClick={removeItem} className={'border-inherit shadow-md rounded-md px-3'}>-</button>
+                            <p className={'px-2'}>{p.quantity}</p>
+                            <button data-id={p.product._id} onClick={addItem} className={'border-inherit shadow-md rounded-md px-3'}>+</button>
+                          </div>
                         </div>
                       </div>
+                    ))
+                  }
+                </div>
+                <div>
+                  {
+                    cartProductList.length > 0 &&
+                    <div className={'bg-white rounded-xl border-inherit shadow p-3 my-3'}>
+                      <h2 className={'font-bold text-xl'}>Place Order</h2>
+                      <hr className={'my-3'} />
+                      <h1 className={''}>Total Amount : Rs.<b>{cartTotalAmount}</b></h1>
+                      <button className={'bg-blue-600 text-white px-5 py-3 rounded-lg my-3 w-full'} onClick={handlePayment}>Pay Now</button>
                     </div>
-                  ))
-                }
-              </div>
-              <div>
-                {
-                  cartProductList.length > 0 &&
-                  <div className={'bg-white rounded-xl border-inherit shadow p-3 my-3'}>
-                    <h2 className={'font-bold text-xl'}>Place Order</h2>
-                    <hr className={'my-3'} />
-                    <h1 className={''}>Total Amount : Rs.<b>{cartTotalAmount}</b></h1>
-                    <button className={'bg-blue-600 text-white px-5 py-3 rounded-lg my-3 w-full'} onClick={handlePayment}>Pay Now</button>
-                  </div>
-                }
+                  }
+                </div>
               </div>
             </div>
-          </div>
 
-        </div>
-      </main>
+          </div>
+        </main>
+      )}
+
     </>
   )
 }
