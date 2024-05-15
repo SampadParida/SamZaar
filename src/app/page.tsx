@@ -5,7 +5,7 @@ import {useState, useEffect} from 'react';
 import ProductCard from './components/ProductCard';
 
 export default function Home() {
-  type ApiResType = { id:number, title:string, price:number, image:string };
+  type ApiResType = { _id:number, title:string, price:number, image:string };
   const [data, setData] = useState<ApiResType[] | null>(null);
   const [isLoading, setLoading] =  useState(true)
   
@@ -32,7 +32,7 @@ export default function Home() {
       ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-screen max-w-7xl mx-0 px-4">
         {products.map((p) => (
-          <ProductCard key={p.id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
+          <ProductCard key={p._id} title={p.title} price={p.price} image={p.image} product_id={p._id}></ProductCard>
         ))}
       </div>
       )}
